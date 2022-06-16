@@ -46,7 +46,7 @@ client.once('ready', () => {
         pickStatus();
     }, 60000);
 
-    if(configdata.factOfTheDay == true){
+    if(configdata.factOfTheDay != null && configdata.factOfTheDay.enabled == true){
         sendFactOfTheDay()
         setInterval(() => {
             sendFactOfTheDay();
@@ -111,11 +111,11 @@ function pickStatus() {
 
 async function sendFactOfTheDay(){
 
-    if(!configdata.factOfTheDayChannel || configdata.factOfTheDayChannel == "") return;
-    if(!configdata.factOfTheDayTime || configdata.factOfTheDayTime == "") return;
+    if(!configdata.factOfTheDay.channel || configdata.factOfTheDay.channel == "") return;
+    if(!configdata.factOfTheDay.time || configdata.factOfTheDay.time == "") return;
 
     let currTime = (new Date().getHours() < 10 ? "0" + new Date().getHours() : new Date().getHours()) + ":" + (new Date().getMinutes() < 10 ? "0" + new Date().getMinutes() : new Date().getMinutes());
-    if(currTime == configdata.factOfTheDayTime){
+    if(currTime == configdata.factOfTheDay.time){
         
      const fact = await fetch("https://uselessfacts.jsph.pl/today.json?language=de").then(res => res.json());
      const embed = {
@@ -132,7 +132,7 @@ async function sendFactOfTheDay(){
         }
     }
 
-    let channel = client.channels.cache.get(configdata.factOfTheDayChannel);
+    let channel = client.channels.cache.get(configdata.factOfTheDay.channel);
 
     if(channel == undefined) return;
 
