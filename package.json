@@ -1,0 +1,19 @@
+{
+  "name": "bhhbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ascii-table": "^0.0.9",
+    "common-tags": "^1.8.2",
+    "discord.js": "^13.8.0",
+    "dotenv": "^16.0.1",
+    "node-fetch": "^2.6.7"
+  }
+}
