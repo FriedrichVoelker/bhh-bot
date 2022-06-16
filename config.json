@@ -1,3 +1,6 @@
 {
-    "prefix": null
+    "prefix": null,
+    "factOfTheDay": true,
+    "factOfTheDayChannel": "986959832143777822",
+    "factOfTheDayTime": "00:00"
 }

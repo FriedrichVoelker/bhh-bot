@@ -1,0 +1,20 @@
+{
+    "stati": [        
+        {
+        "type": "PLAYING",
+        "text": "mit meinen Freunden"
+    },
+    {
+        "type": "WATCHING",
+        "text": "deinen Haufen an"
+    },
+    {
+        "type": "WATCHING",
+        "text": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+    },
+    {
+        "type": "LISTENING",
+        "text": "%prefix%help"
+    }
+]
+}

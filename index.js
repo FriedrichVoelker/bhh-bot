@@ -1,6 +1,17 @@
 const { Client, Collection, Intents, Permissions } = require("discord.js");
 const { config } = require("dotenv");
 const fs = require("fs");
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+
+let configdata;
+
+if(process.env.DEV == true){
+    let rawdata = fs.readFileSync('config.dev.json');
+    configdata = JSON.parse(rawdata);
+}else{
+    let rawdata = fs.readFileSync('config.json');
+    configdata = JSON.parse(rawdata);
+}
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES ] });
 
@@ -27,14 +38,20 @@ client.once('ready', () => {
     client.user.setActivity(process.env.ACTIVITY_STATUS, { type: process.env.ACTIVITY_TYPE });
     
     let prefix = ""
-    let rawdata = fs.readFileSync('config.json');
-    let data = JSON.parse(rawdata);
-    prefix = data.prefix
+    prefix = configdata.prefix
     var confPrefix = (prefix == "" || prefix == null ? process.env.PREFIX : prefix);
     prefixVariable = confPrefix
+    pickStatus()
     setInterval(() => {
         pickStatus();
     }, 60000);
+
+    if(configdata.factOfTheDay == true){
+        sendFactOfTheDay()
+        setInterval(() => {
+            sendFactOfTheDay();
+        }, 60000);
+    }
 
 });
 
@@ -86,24 +103,40 @@ client.login(process.env.TOKEN);
 
 
 function pickStatus() {
-    let status = [
-        {
-            type: "PLAYING",
-            text: "with my friends"
-        },
-        {
-            type: "WATCHING",
-            text: "deinen Haufen an",
-        },
-        {
-            type: "WATCHING",
-            text: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-        },
-        {
-            type: "LISTENING",
-            text: prefixVariable + "help",
-        }
-    ]
-    let pickedStatus = status[Math.floor(Math.random() * status.length)];
+    let status = require("./static/json/status.json");
+    let pickedStatus = status.stati[Math.floor(Math.random() * status.stati.length)];
+    pickedStatus.text = pickedStatus.text.replaceAll("%prefix%", prefixVariable);
     client.user.setActivity(pickedStatus.text, { type: pickedStatus.type });
+}
+
+async function sendFactOfTheDay(){
+
+    if(!configdata.factOfTheDayChannel || configdata.factOfTheDayChannel == "") return;
+    if(!configdata.factOfTheDayTime || configdata.factOfTheDayTime == "") return;
+
+    let currTime = (new Date().getHours() < 10 ? "0" + new Date().getHours() : new Date().getHours()) + ":" + (new Date().getMinutes() < 10 ? "0" + new Date().getMinutes() : new Date().getMinutes());
+    if(currTime == configdata.factOfTheDayTime){
+        
+     const fact = await fetch("https://uselessfacts.jsph.pl/today.json?language=de").then(res => res.json());
+     const embed = {
+        color: "RANDOM",
+        title: "Unnützer Fakt des Tages",
+        timestamp: new Date(),
+        description: fact.text + "\n\nQuelle: [" + fact.source + "](" + fact.source_url + ")",
+        author: {
+            name: client.user.username,
+            icon_url: client.user.displayAvatarURL()
+        },
+        footer: {
+            text: "Permalink: " + fact.permalink,
+        }
+    }
+
+    let channel = client.channels.cache.get(configdata.factOfTheDayChannel);
+
+    if(channel == undefined) return;
+
+    channel.send({ embeds: [embed] });
+
+    }
 }

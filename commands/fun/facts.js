@@ -29,6 +29,8 @@ module.exports = {
                 }
         }
 
+        // API: https://uselessfacts.jsph.pl/
+
         const fact = await fetch("https://uselessfacts.jsph.pl/random.json?language="+lang).then(res => res.json());
 
         const embed = {
