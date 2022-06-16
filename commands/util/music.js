@@ -34,7 +34,6 @@ module.exports = {
             const stream = ytdl(args[0], { filter : 'audioonly' });
             const resource = createAudioResource(stream);
             await player.play(resource);
-            connection.unsubscribe();
             connection.subscribe(player);
         }else{
             const answer = await message.channel.send("❌ Du musst in einem voice channel sein um dies zu tun!");
