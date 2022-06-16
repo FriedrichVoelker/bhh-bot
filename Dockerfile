@@ -1,13 +1,12 @@
-FROM node:latest
+FROM node:16.9.1-alpine
 
 # Create the bot's directory
-RUN mkdir -p /usr/src/bot
 WORKDIR /usr/src/bot
 
-COPY package.json /usr/src/bot
+COPY package*.json ./
 RUN npm install
 
-COPY . /usr/src/bot
+COPY . .
 
 # Start the bot.
 CMD ["node", "index.js"]

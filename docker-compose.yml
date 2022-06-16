@@ -1,3 +1,4 @@
 services:
-  bot:
-    build: .
+    bot:
+        build: .
+        restart: always
