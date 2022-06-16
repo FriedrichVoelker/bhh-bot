@@ -21,6 +21,7 @@ module.exports = {
             const stream = ytdl('https://www.youtube.com/watch?v=dQw4w9WgXcQ', { filter : 'audioonly' });
             const resource = createAudioResource(stream);
             await player.play(resource);
+            connection.unsubscribe();
             connection.subscribe(player);
         }else{
             message.channel.send("❌ Du musst in einem voice channel sein um dies zu tun!");

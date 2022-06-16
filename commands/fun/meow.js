@@ -20,6 +20,7 @@ module.exports = {
             });
             const resource = createAudioResource(require("path").join(__dirname, "../../static/sounds/meow.mp3"));
             await player.play(resource);
+            connection.unsubscribe();
             connection.subscribe(player);
         }else{
             message.channel.send("❌ Du musst in einem voice channel sein um dies zu tun!");
