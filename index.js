@@ -2,7 +2,7 @@ const { Client, Collection, Intents, Permissions } = require("discord.js");
 const { config } = require("dotenv");
 const fs = require("fs");
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES ] });
 
 let prefixVariable = "";
 
@@ -39,12 +39,6 @@ client.once('ready', () => {
 });
 
 client.on("messageCreate", async message => {
-    let prefix = ""
-    // let rawdata = fs.readFileSync('config.json');
-    // let data = JSON.parse(rawdata);
-    // prefix = data.prefix
-    // var confPrefix = (prefix == "" || prefix == null ? process.env.PREFIX : prefix);
-    // prefixVariable = confPrefix
     confPrefix = prefixVariable
     let prefixes = [confPrefix, "bhhbot", `<@!${client.user.id}> `, `<@${client.user.id}> `]
 

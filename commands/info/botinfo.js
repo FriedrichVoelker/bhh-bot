@@ -36,7 +36,7 @@ module.exports = {
                 },
                 {
                     "name": "Bot:",
-                    "value": `**Username:** ${client.user.username}#${client.user.discriminator}\n**Erstellt:** <t:${convertIDtoUnix(client.user.id)}:R>`,
+                    "value": `**Username:** ${client.user.username}#${client.user.discriminator}\n**Erstellt:** <t:${convertIDtoUnix(client.user.id)}:R>\n**Repository:** [GitHub](https://github.com/FriedrichVoelker/discord-bot)`,
                     "inline": false
                 },
                 {
