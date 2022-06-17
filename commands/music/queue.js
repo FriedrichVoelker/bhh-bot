@@ -3,7 +3,7 @@ const ytdl = require('ytdl-core');
 
 const {playerList} = require('../../util/playerList.js');
 
-const {queue} = require('../../util/queueList.js');
+const {queue} = require('../../util/queueManager.js');
 
 module.exports = {
     name: "queue",
