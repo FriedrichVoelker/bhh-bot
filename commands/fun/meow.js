@@ -1,5 +1,6 @@
 const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } = require('@discordjs/voice');
 
+const {playerList} = require('../../util/playerList.js');
 module.exports = {
     name: "meow",
     category: "fun",
@@ -12,12 +13,27 @@ module.exports = {
                 guildId: message.member.voice.channel.guild.id,
                 adapterCreator: message.member.voice.channel.guild.voiceAdapterCreator,
             });
-            message.delete()
-            const player = createAudioPlayer();
+            try{
+                message.delete();
+            }catch(e){
+                console.log(e);
+            }
+            let player = createAudioPlayer();
+
+            if(playerList.has(message.guild.id)){
+                player = playerList.get(message.guild.id);
+            }else{
+                playerList.add(message.guild.id, player);
+            }
             player.on('error', console.error);
             player.on(AudioPlayerStatus.Idle, () => {
                 connection.disconnect();
+                connection.destroy();
             });
+
+            player.on('disconnect', () => {
+                connection.destroy();
+            })
             const resource = createAudioResource(require("path").join(__dirname, "../../static/sounds/meow.mp3"));
             await player.play(resource);
             connection.subscribe(player);
