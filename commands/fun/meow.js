@@ -29,10 +29,16 @@ module.exports = {
             player.on(AudioPlayerStatus.Idle, () => {
                 connection.disconnect();
                 connection.destroy();
+                if(playerList.has(message.guild.id)){
+                    playerList.remove(message.guild.id);
+                }
             });
 
             player.on('disconnect', () => {
                 connection.destroy();
+                if(playerList.has(message.guild.id)){
+                    playerList.remove(message.guild.id);
+                }
             })
             const resource = createAudioResource(require("path").join(__dirname, "../../static/sounds/meow.mp3"));
             await player.play(resource);
