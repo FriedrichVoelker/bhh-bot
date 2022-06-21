@@ -27,11 +27,18 @@ module.exports = {
             }
             player.on('error', console.error);
             player.on(AudioPlayerStatus.Idle, () => {
+                connection.disconnect();
                 connection.destroy();
+                if(playerList.has(message.guild.id)){
+                    playerList.remove(message.guild.id);
+                }
             });
 
             player.on('disconnect', () => {
                 connection.destroy();
+                if(playerList.has(message.guild.id)){
+                    playerList.remove(message.guild.id);
+                }
             })
 
             const stream = ytdl('https://www.youtube.com/watch?v=dQw4w9WgXcQ', { filter : 'audioonly' });
