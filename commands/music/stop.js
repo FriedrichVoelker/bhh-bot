@@ -13,7 +13,7 @@ module.exports = {
         }
         const connection = getVoiceConnection(message.guild.id);
         if(connection) {
-            connection.destroy()
+            connection.disconnect()
             if(playerList.has(message.guild.id)){
                 playerList.remove(message.guild.id);
             }

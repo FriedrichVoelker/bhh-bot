@@ -4,5 +4,10 @@
         "enabled": true,
         "channel": "986959832143777822",
         "time": "00:00"
+    },
+    "dailyMeme": {
+        "enabled": true,
+        "channel": "986959832143777822",
+        "time": "00:00"
     }
 }

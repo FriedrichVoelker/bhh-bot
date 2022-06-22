@@ -12,7 +12,7 @@ const playerList = {
         playerListMap[guild] = undefined;
     },
     has(guild){
-        return playerListMap[guild] !== undefined;
+        return playerListMap[guild] != undefined;
     }
 }
-module.exports = { playerList }
+module.exports = { playerList, playerListMap }

@@ -5,7 +5,12 @@ const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch
 
 let configdata;
 
-if(process.env.DEV == true){
+
+config({
+    path: __dirname + "/.env"
+});
+
+if(process.env.DEV === "true"){
     let rawdata = fs.readFileSync('config.dev.json');
     configdata = JSON.parse(rawdata);
 }else{
@@ -22,11 +27,6 @@ client.commands = new Collection();
 client.aliases = new Collection();
 
 client.categories = fs.readdirSync("./commands/");
-
-config({
-    path: __dirname + "/.env"
-});
-
 // Run the command loader
 ["command"].forEach(handler => {
     require(`./handlers/${handler}`)(client);
@@ -50,6 +50,13 @@ client.once('ready', () => {
         sendFactOfTheDay()
         setInterval(() => {
             sendFactOfTheDay();
+        }, 60000);
+    }
+
+    if(configdata.dailyMeme != null && configdata.dailyMeme.enabled == true){
+        sendDailyMeme()
+        setInterval(() => {
+            sendDailyMeme();
         }, 60000);
     }
 
@@ -138,5 +145,41 @@ async function sendFactOfTheDay(){
 
     channel.send({ embeds: [embed] });
 
+    }
+}
+
+async function sendDailyMeme() {
+    if(!configdata.dailyMeme.channel || configdata.dailyMeme.channel == "") return;
+    if(!configdata.dailyMeme.time || configdata.dailyMeme.time == "") return;
+
+    let sub = configdata.dailyMeme.sub ? configdata.dailyMeme.sub : "ProgrammerHumour";
+    let currTime = (new Date().getHours() < 10 ? "0" + new Date().getHours() : new Date().getHours()) + ":" + (new Date().getMinutes() < 10 ? "0" + new Date().getMinutes() : new Date().getMinutes());
+    if(currTime == configdata.dailyMeme.time){
+        
+        const url = `https://www.reddit.com/r/${sub}/hot/.json?limit=10`
+        const memes = await fetch(url).then(res => res.json())
+
+        const children = memes.data.children
+        const meme = children[Math.floor(Math.random() * children.length)].data
+
+        console.log("Dailymeme: Sending")
+        const embed = {
+            color: "RANDOM",
+            title: "Daily Meme: " + meme.title,
+            timestamp: new Date(),
+            image:{
+                url: meme.url
+            },
+            url: "https://reddit.com" + meme.permalink,
+            footer: {
+                text: "Von: https://reddit.com/r/" + sub,
+            }
+        }
+
+    let channel = client.channels.cache.get(configdata.dailyMeme.channel);
+
+    if(channel == undefined) return;
+
+    channel.send({ embeds: [embed] });
     }
 }

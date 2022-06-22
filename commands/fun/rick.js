@@ -35,6 +35,7 @@ module.exports = {
             });
 
             player.on('disconnect', () => {
+                connection.disconnect();
                 connection.destroy();
                 if(playerList.has(message.guild.id)){
                     playerList.remove(message.guild.id);

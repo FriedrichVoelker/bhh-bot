@@ -1,6 +1,7 @@
 const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } = require('@discordjs/voice');
+const { createReadStream } = require('fs')
 
-const {playerList} = require('../../util/playerList.js');
+const {playerList, playerListMap} = require('../../util/playerList.js');
 module.exports = {
     name: "meow",
     category: "fun",
@@ -35,14 +36,19 @@ module.exports = {
             });
 
             player.on('disconnect', () => {
+                connection.disconnect();
                 connection.destroy();
                 if(playerList.has(message.guild.id)){
                     playerList.remove(message.guild.id);
                 }
             })
-            const resource = createAudioResource(require("path").join(__dirname, "../../static/sounds/meow.mp3"));
-            await player.play(resource);
-            connection.subscribe(player);
+            try{
+                const resource = await createAudioResource(createReadStream(require("path").join(__dirname, "../../static/sounds/meow.mp3")));
+                await player.play(resource);
+                connection.subscribe(player);
+            }catch(e){
+                console.log(e);
+            }
         }else{
             message.channel.send("❌ Du musst in einem voice channel sein um dies zu tun!");
         }
