@@ -19,7 +19,7 @@ module.exports = {
         }
         const msg = await message.channel.send(`Fetching a random meme from r/${sub}...`);
 
-        const url = `https://www.reddit.com/r/${sub}/hot/.json?limit=10`
+        const url = `https://www.reddit.com/r/${sub}/hot/.json?limit=100`
         const memes = await fetch(url).then(res => res.json())
 
         const children = memes.data.children
