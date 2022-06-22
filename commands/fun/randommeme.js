@@ -8,6 +8,12 @@ module.exports = {
     run: async(client, message, args) => {
         let sub = "ProgrammerHumor"
 
+        try{
+            await message.delete()
+        }catch(e){
+            console.log(e)
+        }
+
         if(args.length > 0) {
             sub = args[0]
         }
