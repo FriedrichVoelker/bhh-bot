@@ -20,13 +20,26 @@ module.exports = {
 async function getAll(client, message) {
 
     let owner = await message.guild.members.fetch(process.env.BOT_OWNER_ID);
-    const embed = new MessageEmbed()
+    const oldEembed = new MessageEmbed()
         .setColor("RANDOM")
         .setTitle("Help")
         .setTimestamp()
         .setAuthor(message.author.username, message.author.displayAvatarURL())
-        .setFooter("Bot made by: " + owner.user.username + "#" + owner.user.discriminator, owner.user.displayAvatarURL()); // "https://cdn.discordapp.com/avatars/" + owner.id + "/" + owner.avatar + ".webp?size=80");
+        .setFooter("Bot made by: " + owner.user.username + "#" + owner.user.discriminator, owner.user.displayAvatarURL());
 
+    const embed = {
+        color: "RANDOM",
+        title: "Hilfe",
+        timestamp: new Date(),
+        author: {
+            name: message.author.username,
+            icon_url: message.author.displayAvatarURL()
+        },
+        footer: {
+            text: "Bot made by: " + owner.user.username + "#" + owner.user.discriminator,
+            icon_url: owner.user.displayAvatarURL()
+        },
+    }
 
     const commands = (category) => {
         return client.commands
@@ -34,7 +47,10 @@ async function getAll(client, message) {
             .map(cmd => `- \`${cmd.name}\``)
             .join("\n");
     }
-
+    let index = client.categories.indexOf("dev")
+    if(index !== -1){
+        client.categories.splice(index, 1);
+    }
     var info = client.categories
         .map(cat => stripIndents `**${cat[0].toUpperCase() + cat.slice(1)}** \n${commands(cat)}`)
         .reduce((string, category) => string + "\n" + category);
@@ -45,28 +61,36 @@ async function getAll(client, message) {
 
     info = "**Prefix: " + confPrefix + "**\n\n" + info
 
-    embed.setDescription(info)
+    embed.description = info
     return message.channel.send({ embeds: [embed] });
 }
 
 function getCMD(client, message, input) {
-    const embed = new MessageEmbed()
-
     const cmd = client.commands.get(input.toLowerCase()) || client.commands.get(client.aliases.get(input.toLowerCase()));
 
-    let info = `No information found for command **${input.toLowerCase()}**`;
-
-    if (!cmd) {
-        return message.channel.send(embed.setColor("RED").setDescription(info));
+    let info = `Keine Informationen für Befehl **${input.toLowerCase()}**`;
+    if (cmd === undefined) {
+        const embed = {
+            color: "RED",
+            description: info,
+            timestamp: new Date(),
+        }
+        return message.channel.send({ embeds: [embed]});
     }
 
-    if (cmd.name) info = `**Command name**: ${cmd.name}`;
-    if (cmd.aliases) info += `\n**Aliases**: ${cmd.aliases.map(a => `\`${a}\``).join(", ")}`;
-    if (cmd.description) info += `\n**Description**: ${cmd.description}`;
+    if (cmd.name) info = `**Command Name**: ${cmd.name}`;
+    if (cmd.aliases) info += `\n**Aliase**: ${cmd.aliases.map(a => `\`${a}\``).join(", ")}`;
+    if (cmd.description) info += `\n**Beschreibung**: ${cmd.description}`;
+
+    const embed = {
+        color: "GREEN",
+        description: info,
+        timestamp: new Date(),
+    }
+
     if (cmd.usage) {
-        info += `\n**Usage**: ${cmd.usage}`;
-        embed.setFooter(`Syntax: <> = required, [] = optional`);
+        info += `\n**Anwendung**: ${cmd.usage}`;
+        embed.footer = `Syntax: <> = erfordert, [] = optional`;
     }
-    embed.setColor("GREEN").setDescription(info)
     return message.channel.send({ embeds: [embed] });
 }

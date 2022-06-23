@@ -4,7 +4,7 @@ module.exports = {
     category: "fun",
     aliases: ["randommeme"],
     description: "Gets a random meme from a subreddit",
-    usage: "command [subreddit] (Standard: ProgrammerHumour)",
+    usage: "command [subreddit] (Standard: ProgrammerHumor)",
     run: async(client, message, args) => {
         let sub = "ProgrammerHumor"
 
@@ -18,13 +18,7 @@ module.exports = {
             sub = args[0]
         }
         const msg = await message.channel.send(`Fetching a random meme from r/${sub}...`);
-
-        const url = `https://www.reddit.com/r/${sub}/hot/.json?limit=100`
-        const memes = await fetch(url).then(res => res.json())
-
-        const children = memes.data.children
-        const meme = children[Math.floor(Math.random() * children.length)].data
-
+        const meme = await getMeme(sub)
         const embed = {
             color: "RANDOM",
             title: meme.title,
@@ -34,8 +28,12 @@ module.exports = {
                 icon_url: message.author.displayAvatarURL()
             },
             image:{
-                url: meme.url
+                url: !meme.is_video ? meme.url : null
             },
+            video: {
+                url: meme.is_video ? meme.url : null
+            },
+            description: meme.media_only ? null : meme.selftext,
             url: "https://reddit.com" + meme.permalink,
             footer: {
                 text: "Von: https://reddit.com/r/" + sub,
@@ -47,4 +45,18 @@ module.exports = {
 
         msg.delete();
     }
+}
+
+
+async function getMeme(sub){
+    // https://www.reddit.com/r/ProgrammerHumor/hot/.json?limit=100
+    const url = `https://www.reddit.com/r/${sub}/hot/.json?limit=100`
+    const memes = await fetch(url).then(res => res.json())
+
+    const children = memes.data.children
+    let meme = children[Math.floor(Math.random() * children.length)].data
+    if(meme.stickied){
+        meme = await getMeme(sub)
+    }
+    return meme
 }

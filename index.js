@@ -62,6 +62,30 @@ client.once('ready', () => {
 
 });
 
+// Button Handler
+
+client.on('interactionCreate', async interaction  => {
+	if (!interaction.isButton()) return;
+	if(interaction.customId.includes("RoleMenu:")){
+        let id = interaction.customId.split("RoleMenu:")[1];
+        if(!interaction.member._roles.includes(id)){
+            try{
+                await interaction.member.roles.add(id);
+                await interaction.reply({content: "Du hast die Rolle <@&"+id+"> erhalten :)", ephemeral: true})
+            }catch(e){
+                await interaction.reply({content: "Fehler! Ich kann die Rolle <@&"+id+"> nicht vergeben", ephemeral: true})
+            }
+        }else{
+            try{
+                await interaction.member.roles.remove(id);
+                await interaction.reply({content: "Dir wurde die Rolle <@&"+id+"> entfernt :)", ephemeral: true})
+            }catch(e){
+                await interaction.reply({content: "Fehler! Ich kann die Rolle <@&"+id+"> nicht entfernen", ephemeral: true})
+            }
+        }
+    }
+});
+
 client.on("messageCreate", async message => {
     confPrefix = prefixVariable
     let prefixes = [confPrefix, "bhhbot", `<@!${client.user.id}> `, `<@${client.user.id}> `]
@@ -87,8 +111,9 @@ client.on("messageCreate", async message => {
     // If message.member is uncached, cache it.
     if (!message.member) message.member = await message.guild.fetchMember(message);
 
-    var args = ""
-    args = message.content.slice(usedPrefix.length).trim().split(/ +/g);
+    // args = message.content.slice(usedPrefix.length).trim().split(/ +/g);
+    const regex = /"[^"]+"|[^\s]+/g
+    let args = message.content.slice(usedPrefix.length).trim().match(regex).map(e => e.replace(/"(.+)"/, "$1"));
 
     const cmd = args.shift().toLowerCase();
 
@@ -155,12 +180,7 @@ async function sendDailyMeme() {
     let sub = configdata.dailyMeme.sub ? configdata.dailyMeme.sub : "ProgrammerHumour";
     let currTime = (new Date().getHours() < 10 ? "0" + new Date().getHours() : new Date().getHours()) + ":" + (new Date().getMinutes() < 10 ? "0" + new Date().getMinutes() : new Date().getMinutes());
     if(currTime == configdata.dailyMeme.time){
-        
-        const url = `https://www.reddit.com/r/${sub}/hot/.json?limit=10`
-        const memes = await fetch(url).then(res => res.json())
-
-        const children = memes.data.children
-        const meme = children[Math.floor(Math.random() * children.length)].data
+        const meme = await getMeme(sub)
 
         console.log("Dailymeme: Sending")
         const embed = {
@@ -168,8 +188,12 @@ async function sendDailyMeme() {
             title: "Daily Meme: " + meme.title,
             timestamp: new Date(),
             image:{
-                url: meme.url
+                url: !meme.is_video ? meme.url : null
             },
+            video: {
+                url: meme.is_video ? meme.url : null
+            },
+            description: meme.media_only ? null : meme.selftext,
             url: "https://reddit.com" + meme.permalink,
             footer: {
                 text: "Von: https://reddit.com/r/" + sub,
@@ -182,4 +206,16 @@ async function sendDailyMeme() {
 
     channel.send({ embeds: [embed] });
     }
+}
+
+async function getMeme(sub){
+    const url = `https://www.reddit.com/r/${sub}/hot/.json?limit=100`
+    const memes = await fetch(url).then(res => res.json())
+
+    const children = memes.data.children
+    let meme = children[Math.floor(Math.random() * children.length)].data
+    if(meme.stickied){
+        meme = await getMeme(sub)
+    }
+    return meme
 }
