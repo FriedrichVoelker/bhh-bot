@@ -40,9 +40,14 @@ module.exports = {
 
         for (let i = 0; i < roleAmount; i++) {
           let role = await askQuestion("Welche Rolle?", message);
-          roles.push(role.split("<@&")[1].split(">")[0]);
+        //   roles.push(role.split("<@&")[1].split(">")[0]);
+          if(role.startsWith("<@&")){
+              roles.push(role.split("<@&")[1].split(">")[0]);
+          }else if(!isNaN(role) && role > 0){
+              roles.push(role)
+          }
           let proccesing = await message.channel.send("Lade....");
-          await botMsg.edit(botMsg.content + " -" + message.guild.roles.cache.find((r) => r.id === role.split("<@&")[1].split(">")[0]).name);
+          await botMsg.edit(botMsg.content + " -" + message.guild.roles.cache.find((r) => r.id === role.startsWith("<@&") ? role.split("<@&")[1].split(">")[0] : role).name);
           try{
             proccesing.delete()
           }catch(e){}
@@ -101,14 +106,17 @@ module.exports = {
         let title = args[1];
         let roles = [];
         for (let i = 2; i < args.length; i++) {
-          let role = args[i];
-          roles.push(role.split("<@&")[1].split(">")[0]);
+            let role = args[i];
+            if(role.startsWith("<@&")){
+                roles.push(role.split("<@&")[1].split(">")[0]);
+            }else if(!isNaN(role) && role > 0){
+                roles.push(""+role)
+            }
         }
         let description = "";
         roles.forEach((role) => {
-          description += "<@&" + role + ">\n";
+          description += "<@&" + (role+"") + ">\n";
         });
-
         description +=
           "\nKlicke auf die Knöpfe unten um dir die Rolle zu geben/zu entfernen";
 
