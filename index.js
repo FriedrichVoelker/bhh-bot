@@ -11,7 +11,17 @@ config({
     path: __dirname + "/.env"
 });
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates, GatewayIntentBits.GuildMessages ] });
+const client = new Client({ intents: [
+    GatewayIntentBits.Guilds, 
+    GatewayIntentBits.GuildVoiceStates, 
+    GatewayIntentBits.GuildMessages, 
+    GatewayIntentBits.GuildMembers, 
+    // GatewayIntentBits.GuildMemberAdd, 
+    // GatewayIntentBits.GuildMemberRemove,
+    // GatewayIntentBits.GuildMessageReactions,
+    // GatewayIntentBits.GuildMessageTyping,
+
+] });
 
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
 
@@ -210,6 +220,7 @@ client.on(Events.InteractionCreate, async interaction => {
 // Handle Join Event
 client.on(Events.GuildMemberAdd, async member => {
     let result = await new DB().query("SELECT * FROM guilds WHERE guildID = ?", [member.guild.id]);
+    console.log(member)
     if(result.length == 0) return;
 
     if(result[0].joinRole != null) {
@@ -228,9 +239,8 @@ client.on(Events.GuildMemberAdd, async member => {
                 .setColor("#00ff00")
                 .setThumbnail(member.user.displayAvatarURL())
                 .addFields(
-                    {name: "Member", value: member.user.username + "#" + member.user.discriminator},
+                    {name: "Member", value: (member.user.username + "#" + member.user.discriminator)},
                     {name: "Member ID", value: member.user.id},
-                    {name: "Member Count", value: member.guild.memberCount}
                 )
                 .setTimestamp()
             logChannel.send({ embeds: [embed] });
@@ -251,9 +261,8 @@ client.on(Events.GuildMemberRemove, async member => {
                 .setColor("#ff0000")
                 .setThumbnail(member.user.displayAvatarURL())
                 .addFields(
-                    {name: "Member", value: member.user.username + "#" + member.user.discriminator},
+                    {name: "Member", value: (member.user.username + "#" + member.user.discriminator)},
                     {name: "Member ID", value: member.user.id},
-                    {name: "Member Count", value: member.guild.memberCount}
                 )
                 .setTimestamp()
             logChannel.send({ embeds: [embed] });

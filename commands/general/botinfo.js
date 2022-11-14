@@ -15,7 +15,6 @@ module.exports = {
             .setAuthor({name: interaction.author.username, iconURL: interaction.author.displayAvatarURL()})
             .setThumbnail(client.user.displayAvatarURL())
             .addFields(
-
                 {name: "Username", value: `${client.user.username}#${client.user.discriminator}`, inline: true},
                 {name: "ID", value: `${client.user.id}`, inline: true},
                 {name: "Erstellt", value: `<t:${convertIDtoUnix(client.user.id)}:R>`, inline: true},
