@@ -3,6 +3,8 @@ services:
         build: .
         container_name: bhh-bot_v2
         restart: unless-stopped
+        depends_on:
+            - mysql
     mysql:
         image: mysql:5.7
         container_name: bhh-bot_v2_mysql
