@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS `guilds` (
   `factTime` varchar(255) DEFAULT '00:00',
   `factLang` varchar(255) DEFAULT 'de',
   `logChannel` varchar(50) DEFAULT NULL,
+  `joinRole` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`guildID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

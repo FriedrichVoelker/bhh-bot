@@ -49,6 +49,12 @@ module.exports = {
                 .setDescription('Konfiguriert den Log Channel')
                 .addChannelOption(option => option.setName('channel').setDescription('Der Channel in dem die Logs angezeigt werden sollen').setRequired(true))
             )
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('joinrole')
+                .setDescription('Setzt die Rolle die einem Benutzer beim Betreten des Servers gegeben wird')
+                .addRoleOption(option => option.setName('role').setDescription('Die Rolle die einem Benutzer beim Betreten des Servers gegeben wird').setRequired(true))
+            )
 
 
         ,
@@ -101,6 +107,13 @@ module.exports = {
             const channel = interaction.options.getChannel('channel');
             await interaction.reply({content: "Der Log Channel wurde auf " + channel.name + " gesetzt!", ephemeral: true });
             new DB().query("UPDATE guilds SET logChannel = ? WHERE guildID = ?", [channel.id, interaction.guild.id]);
+            return;
+        }
+
+        if(subcommand === 'joinrole'){
+            const role = interaction.options.getRole('role');
+            await interaction.reply({content: "Die Joinrole wurde auf " + role.name + " gesetzt!", ephemeral: true });
+            new DB().query("UPDATE guilds SET joinRole = ? WHERE guildID = ?", [role.id, interaction.guild.id]);
             return;
         }
     },

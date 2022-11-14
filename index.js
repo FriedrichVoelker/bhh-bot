@@ -207,6 +207,61 @@ client.on(Events.InteractionCreate, async interaction => {
 //     }
 // });
 
+// Handle Join Event
+client.on(Events.GuildMemberAdd, async member => {
+    let result = await new DB().query("SELECT * FROM guilds WHERE guildID = ?", [member.guild.id]);
+    if(result.length == 0) return;
+
+    if(result[0].joinRole != null) {
+        try{
+            member.roles.add(result[0].joinRole);
+        }catch(e) {
+            console.log(e);
+        }
+    }
+
+    if(result[0].logChannel != null) {
+        const logChannel = member.guild.channels.cache.get(result[0].logChannel);
+        if(logChannel != null) {
+            const embed = new EmbedBuilder()
+                .setTitle("Member Joined")
+                .setColor("#00ff00")
+                .setThumbnail(member.user.displayAvatarURL())
+                .addFields(
+                    {name: "Member", value: member.user.username + "#" + member.user.discriminator},
+                    {name: "Member ID", value: member.user.id},
+                    {name: "Member Count", value: member.guild.memberCount}
+                )
+                .setTimestamp()
+            logChannel.send({ embeds: [embed] });
+        }
+    }
+});
+
+// Handle Leave Event
+client.on(Events.GuildMemberRemove, async member => {
+    let result = await new DB().query("SELECT * FROM guilds WHERE guildID = ?", [member.guild.id]);
+    if(result.length == 0) return;
+
+    if(result[0].logChannel != null) {
+        const logChannel = member.guild.channels.cache.get(result[0].logChannel);
+        if(logChannel != null) {
+            const embed = new EmbedBuilder()
+                .setTitle("Member Left")
+                .setColor("#ff0000")
+                .setThumbnail(member.user.displayAvatarURL())
+                .addFields(
+                    {name: "Member", value: member.user.username + "#" + member.user.discriminator},
+                    {name: "Member ID", value: member.user.id},
+                    {name: "Member Count", value: member.guild.memberCount}
+                )
+                .setTimestamp()
+            logChannel.send({ embeds: [embed] });
+        }
+    }
+});
+
+
 async function sendFactOfTheDay(){
 
     let currTime = (new Date().getHours() < 10 ? "0" + new Date().getHours() : new Date().getHours()) + ":" + (new Date().getMinutes() < 10 ? "0" + new Date().getMinutes() : new Date().getMinutes());
