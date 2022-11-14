@@ -5,8 +5,9 @@ async function generateRoleMenu(interaction, client) {
     const guild = interaction.guild;
     await interaction.guild.roles.fetch()
     const menuArgs = interaction.customId.split(" : ");
-    const channel = guild.channels.cache.get(menuArgs[2]);
-    const title = menuArgs[3];
+    const channel = guild.channels.cache.get(menuArgs[1]);
+    const title = menuArgs[2];
+    const onlyOne = menuArgs[3] === "false";
     const roles = interaction.values.map(role => guild.roles.cache.get(role));
 
     const embed = new EmbedBuilder()
@@ -17,6 +18,12 @@ async function generateRoleMenu(interaction, client) {
         .addFields(
             { name: "Rollen:", value: `${roles.map(role => `<@&${role.id}>`).join("\n")}`, inline: true },
         );
+
+    if(onlyOne){
+        embed.addFields(
+            {name: "Hinweis:", value: "Du kannst nur eine Rolle auswählen."}
+            );
+    }
 
 
     const buttonsRow = new ActionRowBuilder()
@@ -39,6 +46,7 @@ async function updateRoleMenu(interaction, client){
     const newTitle = interaction.customId.split(" : ")[2];
     const message = await interaction.channel.messages.fetch(embedID);
     const roles = interaction.values.map(role => interaction.guild.roles.cache.get(role));
+    const isOnlyOne = interaction.customId.split(" : ")[3] === "false";
     // ipdate the title
 
 
@@ -51,6 +59,13 @@ async function updateRoleMenu(interaction, client){
             { name: "Rollen:", value: `${roles.map(role => `<@&${role.id}>`).join("\n")}`, inline: true },
         );
 
+
+    if(isOnlyOne){
+        newEmbed.addFields(
+            {name: "Hinweis:", value: "Du kannst nur eine Rolle auswählen."}
+            );
+    }
+    
     message.edit({embeds: [newEmbed]});
 
     interaction.reply({content: "Rollenmenü wurde aktualisiert", ephemeral: true});
@@ -74,7 +89,7 @@ async function handleClickAddButton(interaction, client){
             new SelectMenuBuilder()
                 .setMaxValues(roleAmount)
                 .setMinValues(0)
-                .setCustomId('rolemenu_picker')
+                .setCustomId('rolemenu_picker : ' + interaction.message.id)
                 .setPlaceholder('Wähle die Rollen zum hinzufügen')
                 .addOptions(
                     roles.map(role => {
@@ -106,7 +121,7 @@ async function handleClickRemoveButton(interaction, client){
             new SelectMenuBuilder()
                 .setMaxValues(roleAmount)
                 .setMinValues(0)
-                .setCustomId('rolemenu_picker_remove')
+                .setCustomId('rolemenu_picker_remove : ' + interaction.message.id)
                 .setPlaceholder('Wähle die Rollen zum entfernen')
                 .addOptions(
                     roles.map(role => {
@@ -129,7 +144,19 @@ async function handleRoleMenu(interaction, client) {
     const guild = interaction.guild;
     const roles = interaction.values.map(role => guild.roles.cache.get(role));
     const member = guild.members.cache.get(interaction.user.id);
+
+    const messageID = interaction.customId.split(" : ")[1];
+    const message = await interaction.channel.messages.fetch(messageID);
+    const embed = message.embeds[0];
+    const onlyOne = embed.fields.length === 2;
+
     if (interaction.values.length > 0) {
+
+
+        if (onlyOne && interaction.values.length > 1) {
+            interaction.reply({content: "Du kannst nur eine Rolle auswählen.", ephemeral: true});
+            return;
+        }
 
         roles.forEach(role => {
             if (!member.roles.cache.has(role.id)) {

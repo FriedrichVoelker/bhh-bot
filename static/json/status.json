@@ -15,6 +15,10 @@
       {
         "type": "LISTENING",
         "text": "/help"
+      },
+      {
+        "type":"LISTENING",
+        "text":"/ticket create"
       }
     ]
   }

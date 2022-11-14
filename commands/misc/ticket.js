@@ -32,6 +32,7 @@ module.exports = {
         const subcommand = interaction.options.getSubcommand();
 
         if(subcommand == "create"){
+            // await interaction.deferReply({ ephemeral: true });
             const modal = new ModalBuilder()
                 .setTitle('Ticket erstellen')
                 .setCustomId('ticket_modal')
@@ -50,6 +51,7 @@ module.exports = {
             // Add inputs to the modal
             modal.addComponents(firstActionRow);
             await interaction.showModal(modal);
+            // await interaction.deleteReply();
         }else if(subcommand == "add"){
             const user = interaction.options.getUser('user');
 
