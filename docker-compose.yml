@@ -9,6 +9,7 @@ services:
         image: mysql:5.7
         container_name: bhh-bot_v2_mysql
         restart: unless-stopped
+        command: --init-file /data/application/init.sql
         env_file:
             - .env
         environment:
@@ -18,4 +19,4 @@ services:
             MYSQL_PASSWORD: ${DB_PASSWORD}
         volumes:
             - ./utils/db/sql:/var/lib/mysql
-            - ./utils/db/sql/init.sql:/docker-entrypoint-initdb.d
+            - ./utils/db/sql/init.sql:/data/application/init.sql
