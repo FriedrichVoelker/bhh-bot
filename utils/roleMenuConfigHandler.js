@@ -153,9 +153,23 @@ async function handleRoleMenu(interaction, client) {
     if (interaction.values.length > 0) {
 
 
-        if (onlyOne && interaction.values.length > 1) {
-            interaction.reply({content: "Du kannst nur eine Rolle auswählen.", ephemeral: true});
-            return;
+        if (onlyOne) {
+            if(interaction.values.length > 1){
+                interaction.reply({content: "Du kannst nur eine Rolle auswählen.", ephemeral: true});
+                return;
+            }
+
+            const currUserRoles = member.roles.cache.filter(role => role.id !== guild.roles.everyone.id);
+            if(currUserRoles.size > 0){
+                const embedRoles = embed.fields[0].value.split("\n").map(role => role.replace("<@&", "").replace(">", ""));
+                const embedRolesIDS = embedRoles.map(role => guild.roles.cache.get(role));
+
+                if(embedRolesIDS.some(role => currUserRoles.has(role.id))){
+                    interaction.reply({content: "Du kannst nur eine Rolle auswählen und hast bereits eine.", ephemeral: true});
+                    return;
+                }
+            }
+
         }
 
         roles.forEach(role => {

@@ -1,6 +1,5 @@
-const { joinVoiceChannel, AudioPlayerStatus, AudioPlayer, createAudioPlayer, getVoiceConnection, PlayerSubscription,  } = require('@discordjs/voice');
+const { AudioPlayerStatus, createAudioPlayer, getVoiceConnection  } = require('@discordjs/voice');
 const {SlashCommandBuilder} = require('discord.js');
-const ytdl = require('ytdl-core');
 const {playerList} = require('../../utils/playerList.js');
 module.exports = {
 	data: new SlashCommandBuilder()
