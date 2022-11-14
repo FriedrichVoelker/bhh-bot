@@ -3,9 +3,8 @@ const { Client, Collection, Events, REST, Routes, SlashCommandBuilder, GatewayIn
 const { readdirSync } = require("fs");
 const DB = require("./utils/db/dbController.js");
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const path = require("path");
 
-const {generateRoleMenu, handleRoleMenu, handleRoleMenuRemove, handleClickAddButton, handleClickRemoveButton, updateRoleMenu} = require("./utils/roleMenuConfigHandler.js");
-const {generateTicketChannel, closeTicket, adminCloseTicket} = require("./utils/ticketModalHandler.js");
 
 config({
     path: __dirname + "/.env"
@@ -16,10 +15,7 @@ const client = new Client({ intents: [
     GatewayIntentBits.GuildVoiceStates, 
     GatewayIntentBits.GuildMessages, 
     GatewayIntentBits.GuildMembers, 
-    // GatewayIntentBits.GuildMemberAdd, 
-    // GatewayIntentBits.GuildMemberRemove,
-    // GatewayIntentBits.GuildMessageReactions,
-    // GatewayIntentBits.GuildMessageTyping,
+    GatewayIntentBits.MessageContent,
 
 ] });
 
@@ -66,6 +62,16 @@ client.once(Events.ClientReady, async c => {
         }
     });
 
+    const eventFiles = readdirSync("./events").filter(file => file.endsWith('.js'));
+    for (const file of eventFiles) {
+        const event = require('./events/' + file);
+        if (event.once) {
+            client.once(event.name, (...args) => event.execute(...args));
+        } else {
+            client.on(event.name, (...args) => event.execute(...args));
+        }
+    }
+
 
     (async () => {
         try {
@@ -84,25 +90,6 @@ client.once(Events.ClientReady, async c => {
         }
     })();
 
-});
-
-// On guild join
-client.on(Events.GuildCreate, async guild => {
-    const db = new DB();
-    db.query("SELECT * FROM guilds WHERE guildID = ?", [guild.id], (err, result) => {
-        if (err) throw err;
-        if (result.length == 0) {
-            db.query("INSERT INTO guilds (guildID) VALUES (?)", [guild.id]);
-        }
-    });
-});
-
-// On guild leave
-client.on(Events.GuildDelete, async guild => {
-    const db = new DB();
-    db.query("DELETE FROM guilds WHERE guildID = ?", [guild.id], (err, result) => {
-        if (err) throw err;
-    });
 });
 
 
@@ -124,151 +111,32 @@ client.on(Events.InteractionCreate, async interaction => {
 	}
 });
 
-// Handle Select Menus
-client.on(Events.InteractionCreate, async interaction => {
-    if (!interaction.isSelectMenu()) return;
-    const menuArgs = interaction.customId.split(" : ");
 
-    if(menuArgs[0] == "rolemenu_config") {
+// Handle Rename User
+// client.on(Events.Guild, async (oldMember, newMember) => {
+//     if(oldMember.user.bot) return;
+//     if(oldMember.nickname == newMember.nickname) return;
 
-        generateRoleMenu(interaction, client);
-        return;
-    }
-
-    if(menuArgs[0] == "rolemenu_picker") {
-        handleRoleMenu(interaction, client);
-        return;
-    }
-
-    if(menuArgs[0] == "rolemenu_picker_remove") {
-        handleRoleMenuRemove(interaction, client);
-        return;
-    }
-
-    if(menuArgs[0] == "rolemenu_config_update"){
-        updateRoleMenu(interaction, client);
-        return;
-    }
-
-
-});
-
-// Handle Modals
-client.on(Events.InteractionCreate, async interaction => {
-    if (!interaction.isModalSubmit()) return;
-    if(interaction.customId == "ticket_modal") {
-        generateTicketChannel(interaction, client);
-    }
-});
-
-// Handle Buttons
-client.on(Events.InteractionCreate, async interaction => {
-    if (!interaction.isButton()) return;
-    if(interaction.customId == "closeTicket") {
-        closeTicket(interaction, client);
-        return;
-    }
-    if(interaction.customId.startsWith("adminCloseTicket")) {
-        adminCloseTicket(interaction, client);
-        return;
-    }
-
-    if(interaction.customId.startsWith("rolemenu_button_add")) {
-        handleClickAddButton(interaction, client);
-        return;
-    }
-
-    if(interaction.customId.startsWith("rolemenu_button_remove")) {
-        handleClickRemoveButton(interaction, client);
-        return;
-    }
-
-
-
-});
-
-// Handle Messages delete
-// client.on(Events.MessageDelete, async message => {
-//     if(message.author.bot) return;
-//     if(message.channel.type == ChannelType.DM) return;
-//     if(message.channel.type == ChannelType.GroupDM) return;
-
-
-//     // console.log(message)
-//     let result = await new DB().query("SELECT * FROM guilds WHERE guildID = ?", [message.guildId]);
+//     let result = await new DB().query("SELECT * FROM guilds WHERE guildID = ?", [oldMember.guildId]);
 //     if(result.length == 0) return;
 //     if(result[0].logChannel == null) return;
 
-//     const logChannel = message.guild.channels.cache.get(result[0].logChannel);
+//     const logChannel = oldMember.guild.channels.cache.get(result[0].logChannel);
 //     if(logChannel != null) {
-//         console.log(message)
-//         const sendChannel = message.guild.channels.cache.get(message.channelId);
 //         const embed = new EmbedBuilder()
-//             .setTitle("Message Deleted")
+//             .setTitle("Nickname Changed")
 //             .setColor("#ff0000")
-//             .setThumbnail(message.author.displayAvatarURL())
+//             .setThumbnail(oldMember.user.displayAvatarURL())
 //             .addFields(
-//                 {name: "Author", value: message.author.username + "#" + message.author.discriminator},
-//                 {name: "Channel", value: sendChannel.name},
-//                 {name: "Nachricht", value: message.content || "Keine Nachricht"}
+//                 {name: "Autor", value: oldMember.user.username + "#" + oldMember.user.discriminator},
+//                 {name: "Vorher", value: oldMember.nickname || oldMember.user.username},
+//                 {name: "Nachher", value: newMember.nickname || newMember.user.username},
 //             )
 //             .setTimestamp()
 //         logChannel.send({ embeds: [embed] });
 //     }
 // });
 
-// Handle Join Event
-client.on(Events.GuildMemberAdd, async member => {
-    let result = await new DB().query("SELECT * FROM guilds WHERE guildID = ?", [member.guild.id]);
-    console.log(member)
-    if(result.length == 0) return;
-
-    if(result[0].joinRole != null) {
-        try{
-            member.roles.add(result[0].joinRole);
-        }catch(e) {
-            console.log(e);
-        }
-    }
-
-    if(result[0].logChannel != null) {
-        const logChannel = member.guild.channels.cache.get(result[0].logChannel);
-        if(logChannel != null) {
-            const embed = new EmbedBuilder()
-                .setTitle("Member Joined")
-                .setColor("#00ff00")
-                .setThumbnail(member.user.displayAvatarURL())
-                .addFields(
-                    {name: "Member", value: (member.user.username + "#" + member.user.discriminator)},
-                    {name: "Member ID", value: member.user.id},
-                )
-                .setTimestamp()
-            logChannel.send({ embeds: [embed] });
-        }
-    }
-});
-
-// Handle Leave Event
-client.on(Events.GuildMemberRemove, async member => {
-    let result = await new DB().query("SELECT * FROM guilds WHERE guildID = ?", [member.guild.id]);
-    if(result.length == 0) return;
-
-    if(result[0].logChannel != null) {
-        const logChannel = member.guild.channels.cache.get(result[0].logChannel);
-        if(logChannel != null) {
-            const embed = new EmbedBuilder()
-                .setTitle("Member Left")
-                .setColor("#ff0000")
-                .setThumbnail(member.user.displayAvatarURL())
-                .addFields(
-                    {name: "Member", value: (member.user.username + "#" + member.user.discriminator)},
-                    {name: "Member ID", value: member.user.id},
-                )
-                .setTimestamp()
-            logChannel.send({ embeds: [embed] });
-        }
-    }
-});
 
 
 async function sendFactOfTheDay(){
