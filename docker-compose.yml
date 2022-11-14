@@ -1,0 +1,19 @@
+services:
+    bot:
+        build: .
+        container_name: bhh-bot_v2
+        restart: unless-stopped
+    mysql:
+        image: mysql:5.7
+        container_name: bhh-bot_v2_mysql
+        restart: unless-stopped
+        env_file:
+            - .env
+        environment:
+            MYSQL_ROOT_USER: root
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            MYSQL_USER: ${DB_USER}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+        volumes:
+            - ./utils/db/sql:/var/lib/mysql
+            - ./utils/db/sql/init.sql:/docker-entrypoint-initdb.d
