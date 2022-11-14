@@ -4,10 +4,10 @@ services:
         container_name: bhh-bot_v2
         restart: unless-stopped
         depends_on:
-            - mysql
-    mysql:
-        image: mysql:5.7
-        container_name: bhh-bot_v2_mysql
+            - mariadb
+    mariadb:
+        image: mariadb:latest
+        container_name: bhh-bot_v2_db
         restart: unless-stopped
         command: --init-file /data/application/init.sql
         env_file:
@@ -18,5 +18,5 @@ services:
             MYSQL_USER: ${DB_USER}
             MYSQL_PASSWORD: ${DB_PASSWORD}
         volumes:
-            - ./utils/db/sql:/var/lib/mysql
             - ./utils/db/sql/init.sql:/data/application/init.sql
+            - ./utils/db/sql/data:/var/lib/mysql
