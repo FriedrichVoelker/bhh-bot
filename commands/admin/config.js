@@ -1,4 +1,4 @@
-const {SlashCommandBuilder, PermissionsBitField} = require('discord.js');
+const {SlashCommandBuilder, PermissionsBitField, EmbedBuilder} = require('discord.js');
 const DB = require('../../utils/db/dbController.js');
 
 module.exports = {
@@ -54,6 +54,11 @@ module.exports = {
                 .setName('joinrole')
                 .setDescription('Setzt die Rolle die einem Benutzer beim Betreten des Servers gegeben wird')
                 .addRoleOption(option => option.setName('role').setDescription('Die Rolle die einem Benutzer beim Betreten des Servers gegeben wird').setRequired(true))
+            )
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('info')
+                .setDescription('Zeigt die aktuellen Einstellungen an')
             )
 
 
@@ -116,5 +121,29 @@ module.exports = {
             new DB().query("UPDATE guilds SET joinRole = ? WHERE guildID = ?", [role.id, interaction.guild.id]);
             return;
         }
+
+        if(subcommand === 'info'){
+            const guild = await new DB().query("SELECT * FROM guilds WHERE guildID = ?", [interaction.guild.id]);
+
+            const embed = new EmbedBuilder()
+                .setTitle("Einstellungen für " + interaction.guild.name)
+                .setColor("Random")
+                .setThumbnail(interaction.guild.iconURL())
+                .addFields(
+                    {name: "Fact of the Day", value: guild[0].factChannel ? "Aktiviert" : "Deaktiviert"},
+                    {name: "Fact of the Day Channel", value: guild[0].factChannel ? "<#" + guild[0].factChannel + ">" : "Nicht gesetzt", inline: true},
+                    {name: "Fact of the Day Zeit", value: guild[0].factTime ? guild[0].factTime : "Nicht gesetzt", inline: true},
+                    {name: "Fact of the Day Sprache", value: guild[0].factLang ? guild[0].factLang : "Nicht gesetzt", inline: true},
+                    {name: "Log Channel", value: guild[0].logChannel ? "<#" + guild[0].logChannel + ">" : "Deaktiviert"},
+                    {name: "Joinrole", value: guild[0].joinRole ? "<@&" + guild[0].joinRole + ">" : "Deaktiviert"},
+                )
+                .setTimestamp()
+                .setAuthor({name: interaction.user.tag, iconURL: interaction.user.avatarURL()})
+            
+            await interaction.reply({embeds: [embed]});
+            return;
+        }
+
+
     },
 };
