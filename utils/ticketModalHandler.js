@@ -91,8 +91,6 @@ async function generateTicketChannel(interaction, client){
         .addFields(
             { name: "Ticket erstellt von:", value: `<@${interaction.user.id}>`, inline: true },
             { name: "Ticket Nachricht:", value: `${ticketInput}`, inline: true },
-            { name: "Commands:", value: `/ticket add <user> - fügt einen Nutzer hinzu`, inline: true },
-            { name: "\u200B", value: "/ticket remove <user> - entfernt einen Nutzer wieder", inline: true },
         )
     const adminRow = new ActionRowBuilder()
         .addComponents(
@@ -128,6 +126,9 @@ async function closeTicket(interaction, client){
         .addFields(
             { name: "Ticket geschlossen von:", value: `<@${interaction.user.id}>`, inline: true },
             {name: "Channel Name:", value: `${ticketChannel.name}`, inline: true},
+            {name: "\u200B", value: "\u200B", inline: true},
+            { name: "Commands:", value: `/ticket add <user> - fügt einen Nutzer hinzu`, inline: true },
+            { name: "\u200B", value: "/ticket remove <user> - entfernt einen Nutzer wieder", inline: true },
         )
     
     await ticketLogs.send({embeds: [embed]});
