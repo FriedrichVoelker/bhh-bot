@@ -19,7 +19,7 @@ async function acceptTos(interaction){
             const channel = guild.channels.cache.get(result[0].logChannel);
             const embed = new EmbedBuilder()
                 .setTitle("Member hat Regeln akzeptiert")
-                .setColor("GREEN")
+                .setColor("Green")
                 .setThumbnail(member.user.displayAvatarURL())
                 .addFields(
                     {name: "User", value: member.user.username + "#" + member.user.discriminator},
