@@ -11,7 +11,16 @@ async function acceptTos(interaction){
     let result = await db.query("SELECT * FROM guilds WHERE guildID = ? ", [guild.id]);
     if(result.length > 0){
         if(result[0].joinRole != null){
+
+
+
             const role = guild.roles.cache.get(result[0].joinRole);
+
+            if(member.roles.cache.has(role.id)){
+                interaction.reply({content: "Du hast die Regeln bereits akzeptiert!", ephemeral: true});
+                return;
+            }
+
             member.roles.add(role);
         }
 
