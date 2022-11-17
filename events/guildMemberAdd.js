@@ -6,15 +6,18 @@ module.exports = {
     async execute(member) {
         let result = await new DB().query("SELECT * FROM guilds WHERE guildID = ?", [member.guild.id]);
         if(result.length == 0) return;
-    
-        if(result[0].joinRole != null) {
-            try{
-                member.roles.add(result[0].joinRole);
-            }catch(e) {
-                console.log(e);
+        
+
+        if(result[0].tos == null || result[0].tos == 0) {
+            if(result[0].joinRole != null) {
+                try{
+                    member.roles.add(result[0].joinRole);
+                }catch(e) {
+                    console.log(e);
+                }
             }
         }
-    
+
         if(result[0].logChannel != null) {
             const logChannel = member.guild.channels.cache.get(result[0].logChannel);
             if(logChannel != null) {

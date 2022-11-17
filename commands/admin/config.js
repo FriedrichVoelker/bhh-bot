@@ -60,6 +60,12 @@ module.exports = {
                 .setName('info')
                 .setDescription('Zeigt die aktuellen Einstellungen an')
             )
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('tos')
+                .setDescription('(De)aktiviert ob Regeln akzeptiert werden müssen')
+                .addBooleanOption(option => option.setName('tos').setDescription('Ob Regeln akzeptiert werden müssen').setRequired(true))
+            )
 
 
         ,
@@ -141,6 +147,13 @@ module.exports = {
                 .setAuthor({name: interaction.user.tag, iconURL: interaction.user.avatarURL()})
             
             await interaction.reply({embeds: [embed]});
+            return;
+        }
+
+        if(subcommand === 'tos'){
+            const tos = interaction.options.getBoolean('tos');
+            await interaction.reply({content: "Die TOS wurde " + (tos ? "aktiviert" : "deaktiviert") + "!", ephemeral: true });
+            new DB().query("UPDATE guilds SET tos = ? WHERE guildID = ?", [tos ? 1 : 0, interaction.guild.id]);
             return;
         }
 
