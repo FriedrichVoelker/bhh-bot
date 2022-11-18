@@ -1,11 +1,11 @@
-const {SlashCommandBuilder, PermissionsBitField, EmbedBuilder} = require('discord.js');
+const {SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder} = require('discord.js');
 const DB = require('../../utils/db/dbController.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('config')
         .setDescription('Konfiguriert den Bot')
-        .setDefaultMemberPermissions( PermissionsBitField.Flags.ManageGuild, PermissionsBitField.Flags.Administrator | PermissionsBitField.Flags.ManageWebhooks)
+        .setDefaultMemberPermissions( PermissionFlagsBits.ManageGuild | PermissionFlagsBits.Administrator | PermissionFlagsBits.ManageWebhooks)
         .setDMPermission(false)
         .addSubcommandGroup(subcommandGroup =>
             subcommandGroup

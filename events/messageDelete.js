@@ -11,7 +11,7 @@ module.exports = {
     
         const sendChannel = message.guild.channels.cache.get(message.channelId);
         const embed = new EmbedBuilder()
-            .setTitle("Message Deleted")
+            .setTitle("Nachricht gelöscht")
             .setColor("#ff0000")
             .setThumbnail(message.author.displayAvatarURL())
             .addFields(

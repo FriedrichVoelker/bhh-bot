@@ -1,10 +1,10 @@
-const {SlashCommandBuilder, PermissionsBitField, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder} = require('discord.js');
+const {SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder} = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('rules')
         .setDescription('Erstellt eine Nachricht zum akzeptieren der Regeln')
-        .setDefaultMemberPermissions( PermissionsBitField.Flags.ManageGuild, PermissionsBitField.Flags.Administrator | PermissionsBitField.Flags.ManageWebhooks)
+        .setDefaultMemberPermissions( PermissionFlagsBits.ManageGuild | PermissionFlagsBits.Administrator | PermissionFlagsBits.ManageWebhooks)
         .setDMPermission(false)
         .addChannelOption(option => option.setName('channel').setDescription('Der Channel in dem die Nachricht angezeigt werden soll').setRequired(false))
     ,

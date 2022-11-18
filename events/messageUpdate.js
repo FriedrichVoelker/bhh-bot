@@ -12,7 +12,7 @@ module.exports = {
 
         const sendChannel = oldMessage.guild.channels.cache.get(oldMessage.channelId);
         const embed = new EmbedBuilder()
-            .setTitle("Message Edited")
+            .setTitle("Nachricht bearbeitet")
             .setColor("Orange")
             .setThumbnail(oldMessage.author.displayAvatarURL())
             .addFields(

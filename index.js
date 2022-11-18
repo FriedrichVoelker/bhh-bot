@@ -3,7 +3,6 @@ const { Client, Collection, Events, REST, Routes, SlashCommandBuilder, GatewayIn
 const { readdirSync } = require("fs");
 const DB = require("./utils/db/dbController.js");
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-const path = require("path");
 
 
 config({
@@ -22,6 +21,7 @@ const client = new Client({ intents: [
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
 
 client.commands = new Collection();
+client.commandCategories = new Collection();
 // let dbGuilds = [];
 
 client.once(Events.ClientReady, async c => {
@@ -44,10 +44,12 @@ client.once(Events.ClientReady, async c => {
     }, 60000);
 
     const slashCommands = [];
-
+    const comCat = []
 
     readdirSync("./commands/").forEach(async dir =>  {
         const commands = readdirSync("./commands/" + dir + "/").filter(f => f.endsWith(".js"));
+
+        comCat[dir] = [];
 
         for (let file of commands) {
             let command = require('./commands/' + dir + '/' + file);
@@ -56,11 +58,14 @@ client.once(Events.ClientReady, async c => {
             if ('data' in command && 'execute' in command) {
                 client.commands.set(command.data.name, command);
                 slashCommands.push(command.data.toJSON());
+                comCat[dir].push(command);
             } else {
                 console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
             }
         }
     });
+
+    client.commandCategories = comCat;
 
     const eventFiles = readdirSync("./events").filter(file => file.endsWith('.js'));
     for (const file of eventFiles) {
