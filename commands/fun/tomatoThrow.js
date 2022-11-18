@@ -9,7 +9,7 @@ module.exports = {
     async execute(interaction) {
         const user = interaction.options.getUser('user');
 
-        const tomatoGifs = gifs.tomato;
+        const tomatoGifs = gifs.throwTomatoes;
 
         const randomGif = tomatoGifs[Math.floor(Math.random() * tomatoGifs.length)];
 
