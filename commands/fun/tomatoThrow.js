@@ -19,7 +19,7 @@ module.exports = {
             .setImage(randomGif)
             .setColor('Random')
             .setTimestamp()
-            .setAuthor({name: interaction.author.username, iconURL: interaction.author.displayAvatarURL()})
+            .setAuthor({name: interaction.user.username, iconURL: interaction.user.displayAvatarURL()})
         
         await interaction.reply({embeds: [embed]});
     }
