@@ -6,7 +6,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('peitsche')
         .setDescription('Peitscht jemanden aus')
-        .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers | PermissionFlagsBits.KickMembers | PermissionFlagsBits.BanMembers)
+        .setDefaultMemberPermissions(PermissionFlagsBits.KickMembers)
         .addUserOption(option => option.setName('user').setDescription('Der zu peitschende Nutzer')),
     async execute(interaction) {
         const user = interaction.options.getUser('user');

@@ -5,7 +5,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('config')
         .setDescription('Konfiguriert den Bot')
-        .setDefaultMemberPermissions( PermissionFlagsBits.ManageGuild | PermissionFlagsBits.Administrator | PermissionFlagsBits.ManageWebhooks)
+        .setDefaultMemberPermissions( PermissionFlagsBits.ManageGuild)
         .setDMPermission(false)
         .addSubcommandGroup(subcommandGroup =>
             subcommandGroup

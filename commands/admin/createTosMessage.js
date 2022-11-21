@@ -4,7 +4,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('rules')
         .setDescription('Erstellt eine Nachricht zum akzeptieren der Regeln')
-        .setDefaultMemberPermissions( PermissionFlagsBits.ManageGuild | PermissionFlagsBits.Administrator | PermissionFlagsBits.ManageWebhooks)
+        .setDefaultMemberPermissions( PermissionFlagsBits.ManageGuild)
         .setDMPermission(false)
         .addChannelOption(option => option.setName('channel').setDescription('Der Channel in dem die Nachricht angezeigt werden soll').setRequired(false))
     ,
