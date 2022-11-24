@@ -16,7 +16,7 @@ module.exports = {
             .setColor("Orange")
             .setThumbnail(oldMessage.author.displayAvatarURL())
             .addFields(
-                {name: "Autor", value: oldMessage.author.username + "#" + oldMessage.author.discriminator},
+                {name: "Autor", value: `<@${oldMessage.author.id}>`},
                 {name: "Channel", value: sendChannel.name},
                 {name: "Vorher", value: oldMessage.content || "Keine Nachricht"},
                 {name: "Nachher", value: newMessage.content || "Keine Nachricht"},

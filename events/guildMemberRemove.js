@@ -9,8 +9,9 @@ module.exports = {
                 .setColor("#ff0000")
                 .setThumbnail(member.user.displayAvatarURL())
                 .addFields(
-                    {name: "Member", value: (member.user.username + "#" + member.user.discriminator)},
-                    {name: "Member ID", value: member.user.id},
+                    {name: "Member", value: `<@${member.user.id}>`},
+                    {name: "Name", value: (member.user.username + "#" + member.user.discriminator), inline: true},
+                    {name: "Member ID", value: member.user.id, inline: true},
                 )
                 .setTimestamp()
             sendToLog(member.guild, embed);

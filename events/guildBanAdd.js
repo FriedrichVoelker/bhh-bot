@@ -11,7 +11,7 @@ module.exports = {
             .setColor("Red")
             .setThumbnail(user.displayAvatarURL())
             .addFields(
-                {name: "User", value: user.username + "#" + user.discriminator},
+                {name: "User", value: `<@${user.id}>`},
                 {name: "ID", value: user.id},
                 {name: "Gebannt von", value: guildBan.client.username + "#" + guildBan.client.discriminator},
                 {name: "Grund", value: guildBan.reason || "Kein Grund angegeben"},
