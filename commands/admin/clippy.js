@@ -22,7 +22,7 @@ module.exports = {
         const channel = interaction.options.getChannel('channel') || interaction.channel;
         const webhooks = await channel.fetchWebhooks();
 
-        let webhook = webhooks.find(webhook => webhook.name === "Clippy");
+        let webhook = webhooks.find(webhook => webhook.token && webhook.name === "Clippy" );
         if(!webhook) {
             webhook = await channel.createWebhook({
                 name: "Clippy",
