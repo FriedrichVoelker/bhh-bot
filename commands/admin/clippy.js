@@ -26,7 +26,7 @@ module.exports = {
         if(!webhook) {
             webhook = await channel.createWebhook({
                 name: "Clippy",
-                avatar: './static/images/clippy.jpeg',
+                avatar: './static/images/Clippy.jpeg',
             });
         }
         webhook.send({
