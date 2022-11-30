@@ -66,8 +66,6 @@ module.exports = {
                 .setDescription('(De)aktiviert ob Regeln akzeptiert werden müssen')
                 .addBooleanOption(option => option.setName('tos').setDescription('Ob Regeln akzeptiert werden müssen').setRequired(true))
             )
-
-
         ,
     async execute(interaction, client) {
 

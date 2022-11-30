@@ -155,7 +155,7 @@ async function sendFactOfTheDay(){
             if(guild.factTime != null && guild.factChannel != null) {
                 if(currTime == guild.factTime) {
                     client.channels.fetch(guild.factChannel).then(async channel => {
-                        channel.send("Fact of the day");
+                        // channel.send("Fact of the day");
                         const fact = await fetch("https://uselessfacts.jsph.pl/today.json?language="+(guild.factLang || "de")).then(res => res.json());
                         const embed = new EmbedBuilder()
                             .setColor("Random")
@@ -165,10 +165,23 @@ async function sendFactOfTheDay(){
                             .setDescription(fact.text + "\n\nQuelle: [" + fact.source + "](" + fact.source_url + ")")
                             .setURL(fact.permalink)
                             .setFooter({text: "Permalink: " + fact.permalink})
+
+                            
+                            channel.send({ embeds: [embed] });
             
             
             
-                        channel.send({ embeds: [embed] });
+
+                        const xkcd = await fetch(`https://xkcd.com/info.0.json`);
+                        const body = await xkcd.json();
+                        const embed2 = new EmbedBuilder()
+                            .setTitle(body.safe_title)
+                            .setImage(body.img)
+                            .setFooter({text: `xkcd.com/${body.num}`})
+                            .setTimestamp()
+
+                            
+                        channel.send({ embeds: [embed2] });
                     });
                 }
             }

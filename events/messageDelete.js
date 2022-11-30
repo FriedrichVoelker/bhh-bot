@@ -15,7 +15,7 @@ module.exports = {
             .setColor("#ff0000")
             .setThumbnail(message.author.displayAvatarURL())
             .addFields(
-                {name: "Autor", value: `<@${member.user.id}>`},
+                {name: "Autor", value: `<@${message.member.user.id}>`},
                 {name: "Channel", value: sendChannel.name},
                 {name: "Nachricht", value: message.content || "Keine Nachricht"},
             )
