@@ -2,6 +2,8 @@ services:
     bot:
         build: .
         container_name: bhh-bot_v2
+        environment:
+            - TZ=Europe/Berlin
         restart: unless-stopped
         depends_on:
             - mariadb
