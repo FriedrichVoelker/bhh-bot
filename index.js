@@ -175,9 +175,11 @@ async function sendFactOfTheDay(){
                         const xkcd = await fetch(`https://xkcd.com/info.0.json`);
                         const body = await xkcd.json();
                         const embed2 = new EmbedBuilder()
-                            .setTitle("Daily xkcd " +body.safe_title)
+                            .setTitle("Daily xkcd: " +body.safe_title)
+                            .setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() })
                             .setImage(body.img)
-                            .setFooter({text: `xkcd.com/${body.num}`})
+                            .setURL("https://xkcd.com/" + body.num)
+                            .setFooter({text: `https://xkcd.com/${body.num}`})
                             .setTimestamp()
 
                             

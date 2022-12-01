@@ -7,18 +7,15 @@ module.exports = {
         .setDescription('Zeigt ein xkcd Comic an')
         .addStringOption(option => option.setName('comic').setDescription('Der Comic der angezeigt werden soll')),
     async execute(interaction, client) {
-        let comic = interaction.options.getString('comic');
-        if(comic === null){
-            comic = "";
-        }else{
-            comic = "/" + comic;
-        }
+        let comic = interaction.options.getString('comic') ? "/" + interaction.options.getString('comic')  : '';
         const response = await fetch(`https://xkcd.com${comic}/info.0.json`);
         const body = await response.json();
         const embed = new EmbedBuilder()
             .setTitle(body.safe_title)
+            .setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() })
             .setImage(body.img)
-            .setFooter({text: `xkcd.com/${body.num}`})
+            .setURL("https://xkcd.com/" + body.num)
+            .setFooter({text: `https://xkcd.com/${body.num}`})
             .setTimestamp()
         interaction.reply({embeds: [embed]});
     }
