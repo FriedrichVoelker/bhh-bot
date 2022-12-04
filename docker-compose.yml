@@ -1,7 +1,9 @@
 services:
     bot:
-        build: .
+        build: ./bot
         container_name: bhh-bot_v2
+        env_file:
+            - .env
         environment:
             - TZ=Europe/Berlin
         restart: unless-stopped
