@@ -22,5 +22,5 @@ services:
             MYSQL_USER: ${DB_USER}
             MYSQL_PASSWORD: ${DB_PASSWORD}
         volumes:
-            - ./utils/db/sql/init.sql:/data/application/init.sql
-            - ./utils/db/sql/data:/var/lib/mysql
+            - ./db/sql/init.sql:/data/application/init.sql
+            - ./db/sql/data:/var/lib/mysql

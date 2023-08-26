@@ -1,4 +1,4 @@
-FROM node:16.9.1-alpine
+FROM node:18.17.1-alpine
 
 # Create the bot's directory
 WORKDIR /usr/src/bot
