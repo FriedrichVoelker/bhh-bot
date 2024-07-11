@@ -1,5 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder  } = require('discord.js');
 
+const package = require('../../package.json');
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('botinfo')
@@ -21,8 +23,8 @@ module.exports = {
                 {name: "Repository", value: "[GitHub](https://github.com/FriedrichVoelker/bhh-bot)"},
                 {name: "Profilbild von", value: `<@465908135006175232>`, inline: true},
                 {name: "Programmiert von", value: `<@268394842168623108>`},
-                {name: "Programmiert mit", value: "[Node.js v16.9.1](https://nodejs.org/en/) und [discord.js v14.6.0](https://discord.js.org/#/)", inline: true},
-                {name: "Version", value: `v${require('../../package.json').version}`, inline: true},
+                {name: "Programmiert mit", value: `[Node.js v18.17.1](https://nodejs.org/en/) und [discord.js v${package.dependencies["discord.js"].replace('^', '')}](https://discord.js.org/#/)`, inline: true},
+                {name: "Version", value: `v${package.version}`, inline: true},
 
 
                 // {name: "Bot:", value: `**Username:** ${client.user.username}#${client.user.discriminator}\n**Erstellt:** <t:${convertIDtoUnix(client.user.id)}:R>\n**Repository:** [GitHub](https://github.com/FriedrichVoelker/bhh-bot)\n**Profilbild von:** <@465908135006175232>\n**Version:** 2.0`, inline: false}
